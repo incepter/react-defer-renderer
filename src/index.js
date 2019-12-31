@@ -1,3 +1,4 @@
 import withDeferRender from './withDeferRender'
+import DeferRenderProvider from './DeferRenderProvider'
 
-export default withDeferRender
+export { DeferRenderProvider, withDeferRender }

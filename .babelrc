@@ -5,5 +5,10 @@
     }],
     "@babel/preset-react"
   ],
-  "plugins": ["@babel/plugin-proposal-class-properties", "@babel/plugin-proposal-optional-chaining"]
+  "plugins": [
+    ["transform-react-remove-prop-types", {
+      "removeImport": true
+    }],
+    "@babel/plugin-proposal-optional-chaining"
+  ]
 }

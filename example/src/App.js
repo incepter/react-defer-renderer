@@ -1,5 +1,5 @@
 import React from 'react'
-import withDeferRender from 'react-deffer-renderer'
+import { withDeferRender, DeferRenderProvider } from 'react-deffer-renderer'
 
 function constructRangerArray(length) {
   const out = []
@@ -9,16 +9,30 @@ function constructRangerArray(length) {
   return out
 }
 
-function MyComponent() {
-  console.log('rendered my component')
-  return <p>Hello, world !</p>
+function MyComponent({ value }) {
+  return <input value={value} />
 }
 
 const MyDeferredComponent = withDeferRender(MyComponent)
 const App = () => {
+  const [unmount, setUnmount] = React.useState(false)
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      // setUnmount(true)
+    }, 200)
+  }, [])
   console.log('APP')
-  return <div>
-    {constructRangerArray(30).map(i => <MyDeferredComponent key={i} />)}
-  </div>
+  return (
+    <DeferRenderProvider>
+      <button onClick={() => setUnmount(old => !old)}>Unmount</button>
+      {!unmount && (
+        <div>
+          {constructRangerArray(1000).map(i => <MyDeferredComponent key={i} value={i} />)}
+        </div>
+      )}
+
+    </DeferRenderProvider>
+  )
 }
 export default App
