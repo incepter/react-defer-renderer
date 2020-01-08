@@ -16,7 +16,7 @@ function standaloneRegister(registration) {
   }
 }
 
-function standaloneCleanUp(timeoutId, rafId) {
+function standaloneCleanUp({ timeoutId, rafId }) {
   window.clearTimeout(timeoutId)
   window.cancelAnimationFrame(rafId)
 }

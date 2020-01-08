@@ -1,5 +1,5 @@
 import React from 'react'
-import { withDeferRender, DeferRenderProvider } from 'react-deffer-renderer'
+import { withDeferRender, DeferRenderProvider, DeferContext } from 'react-deffer-renderer'
 
 function constructRangerArray(length) {
   const out = []
@@ -10,10 +10,20 @@ function constructRangerArray(length) {
 }
 
 function MyComponent({ value }) {
-  return <input value={value} />
+  return <input value={value} onChange={() => {}} />
 }
 
 const MyDeferredComponent = withDeferRender(MyComponent)
+
+function Commander() {
+  const { pause, resume } = React.useContext(DeferContext)
+  return (
+    <div>
+      <button onClick={pause}>pause</button>
+      <button onClick={resume}>resume</button>
+    </div>
+  )
+}
 const App = () => {
   const [unmount, setUnmount] = React.useState(false)
 
@@ -25,10 +35,11 @@ const App = () => {
   console.log('APP')
   return (
     <DeferRenderProvider>
+      <Commander />
       <button onClick={() => setUnmount(old => !old)}>Unmount</button>
       {!unmount && (
         <div>
-          {constructRangerArray(1000).map(i => <MyDeferredComponent key={i} value={i} />)}
+          {constructRangerArray(20).map(i => <MyDeferredComponent key={i} value={i} />)}
         </div>
       )}
 
