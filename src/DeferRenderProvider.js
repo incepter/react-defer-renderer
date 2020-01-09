@@ -7,6 +7,7 @@ const __WORKING_STATUS = {
   PAUSED: 'paused',
   WORKING: 'working'
 }
+
 const __DEFFER_MODES = {
   SEQUENTIAL: 'sequential',
   SYNC: 'sync',
@@ -17,7 +18,7 @@ function makeNewWork(work, index) {
   return { work, index, ready: false, done: false, timeoutId: null, rafId: null }
 }
 
-function DeferRenderProvider({ delay = 100, batchSize = 10, mode = __DEFFER_MODES.SEQUENTIAL, children }) {
+function DeferRenderProvider({ delay = 0, batchSize = 10, mode = __DEFFER_MODES.SEQUENTIAL, children }) {
   const workStatus = React.useRef(__WORKING_STATUS.IDLE)
   const lastRegisteredWorkIndex = React.useRef(0)
   const workQueue = React.useRef([])
@@ -44,12 +45,14 @@ function DeferRenderProvider({ delay = 100, batchSize = 10, mode = __DEFFER_MODE
     removeWork(work)
   }
   function asyncProcessCurrentWork() {
-    workStatus.current = __WORKING_STATUS.WORKING
-    currentWork.current.forEach(work => {
-      work.timeoutId = setTimeout(() => {
-        work.rafId = window.requestAnimationFrame(() => commitWork(work))
-      }, delay)
-    })
+    if (workStatus.current !== __WORKING_STATUS.PAUSED) {
+      workStatus.current = __WORKING_STATUS.WORKING
+      currentWork.current.forEach(work => {
+        work.rafId = window.requestAnimationFrame(() => {
+          work.timeoutId = setTimeout(() => commitWork(work), delay)
+        })
+      })
+    }
   }
   function processCurrentWork() {
     if (workStatus.current !== __WORKING_STATUS.PAUSED) {
@@ -91,16 +94,12 @@ function DeferRenderProvider({ delay = 100, batchSize = 10, mode = __DEFFER_MODE
     }
   }
   function cleanUp(index) {
-    const workFromQueue = workQueue.current.find(t => t.index === index)
-    const workFromCurrent = workQueue.current.find(t => t.index === index)
-    if (!workFromCurrent && !workFromQueue) {
-      return
+    const fromCurrent = currentWork.current.find(t => t.index === index)
+    if (fromCurrent) {
+      window.cancelAnimationFrame(fromCurrent?.rafId)
+      clearTimeout(fromCurrent?.timeoutId)
     }
-    if (workFromCurrent || workFromQueue) {
-      clearTimeout(workFromCurrent?.timeoutId)
-      window.cancelAnimationFrame(workFromCurrent?.rafId)
-      removeWork({ index })
-    }
+    removeWork({ index })
   }
   function pause() {
     workStatus.current = __WORKING_STATUS.PAUSED
@@ -110,8 +109,8 @@ function DeferRenderProvider({ delay = 100, batchSize = 10, mode = __DEFFER_MODE
     next()
   }
   React.useEffect(() => {
-    beginWork()
-  }, [])
+    next()
+  })
   return (
     <DeferContext.Provider value={{
       pause,
@@ -127,9 +126,9 @@ function DeferRenderProvider({ delay = 100, batchSize = 10, mode = __DEFFER_MODE
 
 DeferRenderProvider.propTypes = {
   children: PropTypes.any,
+  delay: PropTypes.number,
   batchSize: PropTypes.number,
-  mode: PropTypes.oneOf(Object.values(__DEFFER_MODES)),
-  delay: PropTypes.number
+  mode: PropTypes.oneOf(Object.values(__DEFFER_MODES))
 }
 
 export default DeferRenderProvider

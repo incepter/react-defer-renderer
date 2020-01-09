@@ -46,7 +46,6 @@ const App = () => {
           {constructRangerArray(200).map(i => <MyDeferredComponent key={i} value={i} />)}
         </div>
       )}
-
     </DeferRenderProvider>
   )
 }

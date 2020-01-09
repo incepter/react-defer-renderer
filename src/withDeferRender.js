@@ -27,9 +27,7 @@ export default function withDeferRender(WrappedComponent, config) {
     const [shouldRender, setShouldRender] = React.useState(false)
 
     React.useEffect(() => {
-      const registrationData = register(() => {
-        window.requestAnimationFrame(() => setShouldRender(true))
-      })
+      const registrationData = register(() => setShouldRender(true))
       return () => cleanUp(registrationData)
     }, [])
     React.useEffect(() => {
