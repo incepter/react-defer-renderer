@@ -64,6 +64,7 @@ function DeferRenderProvider({ delay = 0, batchSize = 10, mode = __DEFFER_MODES.
     if (workQueue.current.length === 0) {
       return
     }
+    workStatus.current = __WORKING_STATUS.WORKING
     if (mode === __DEFFER_MODES.SEQUENTIAL) {
       if (currentWork.current.length === 0) {
         const nextWork = workQueue.current[0]
@@ -89,13 +90,12 @@ function DeferRenderProvider({ delay = 0, batchSize = 10, mode = __DEFFER_MODES.
   }
   function next() {
     if (workStatus.current === __WORKING_STATUS.IDLE && workQueue.current.length > 0) {
-      workStatus.current = __WORKING_STATUS.WORKING
       beginWork()
     }
   }
   function cleanUp(index) {
     const fromCurrent = currentWork.current.find(t => t.index === index)
-    if (fromCurrent) {
+    if (fromCurrent && fromCurrent.ready && !fromCurrent.done) {
       window.cancelAnimationFrame(fromCurrent?.rafId)
       clearTimeout(fromCurrent?.timeoutId)
     }
@@ -113,9 +113,9 @@ function DeferRenderProvider({ delay = 0, batchSize = 10, mode = __DEFFER_MODES.
   })
   return (
     <DeferContext.Provider value={{
+      next,
       pause,
       resume,
-      next,
       cleanUp,
       register
     }}>

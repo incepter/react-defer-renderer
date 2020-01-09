@@ -17,7 +17,7 @@ function MyComponent({ value }) {
   return <input value={inputVal} onChange={changeValue} />
 }
 
-const MyDeferredComponent = withDeferRender(MyComponent, { fallback: 'Loading ...', delay: 1000 })
+const MyDeferredComponent = withDeferRender(MyComponent)
 
 function Commander() {
   const { pause, resume } = React.useContext(DeferContext)
@@ -43,7 +43,7 @@ const App = () => {
       <button onClick={() => setUnmount(old => !old)}>Unmount</button>
       {!unmount && (
         <div>
-          {constructRangerArray(200).map(i => <MyDeferredComponent key={i} value={i} />)}
+          {constructRangerArray(2000).map(i => <MyDeferredComponent key={i} value={i} />)}
         </div>
       )}
     </DeferRenderProvider>
