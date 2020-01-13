@@ -4,9 +4,10 @@
 
 [![NPM](https://img.shields.io/npm/v/react-deffer-renderer.svg)](https://www.npmjs.com/package/react-deffer-renderer) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-## This is just a draft, the code isn't there. I am just noting my ideas and looking for contributors
 
 ## What is this
+
+
 
 Defer the render of your react component(tree) after the first paint.
 This increases the time by which the user can interact with the app in general since it wait until paint is done, then request idle callback to tell react it's ok to render that tree
