@@ -1,19 +1,15 @@
 import React from 'react'
 import DeferContext from './Context'
 
-function standaloneRegister(registration) {
-  let timeoutId = null
-  const callback = () => {
-    timeoutId = setTimeout(registration)
+function standaloneRegister(registration, delay) {
+  const registrationData = {
+    rafId: null,
+    timeoutId: null
   }
-  const rafId = window.requestAnimationFrame(
-    () => callback()
-  )
-
-  return {
-    timeoutId,
-    rafId
-  }
+  registrationData.rafId = window.requestAnimationFrame(() => {
+    registrationData.timeoutId = setTimeout(registration, delay)
+  })
+  return registrationData
 }
 
 function standaloneCleanUp({ timeoutId, rafId }) {
@@ -21,7 +17,7 @@ function standaloneCleanUp({ timeoutId, rafId }) {
   window.cancelAnimationFrame(rafId)
 }
 
-export default function withDeferRender(WrappedComponent) {
+export default function withDeferRender(WrappedComponent, config) {
   return function WithDeferRender(props) {
     const contextValue = React.useContext(DeferContext)
     const register = contextValue?.register || standaloneRegister
@@ -31,9 +27,7 @@ export default function withDeferRender(WrappedComponent) {
     const [shouldRender, setShouldRender] = React.useState(false)
 
     React.useEffect(() => {
-      const registrationData = register(() => {
-        window.requestAnimationFrame(() => setShouldRender(true))
-      })
+      const registrationData = register(() => setShouldRender(true))
       return () => cleanUp(registrationData)
     }, [])
     React.useEffect(() => {
@@ -43,7 +37,7 @@ export default function withDeferRender(WrappedComponent) {
     }, [shouldRender])
 
     if (!shouldRender) {
-      return null
+      return config?.fallback || null
     }
     return <WrappedComponent {...props} />
   }

@@ -10,7 +10,11 @@ function constructRangerArray(length) {
 }
 
 function MyComponent({ value }) {
-  return <input value={value} onChange={() => {}} />
+  const [inputVal, setInputVal] = React.useState(value)
+  function changeValue({ target: { value } }) {
+    setInputVal(value)
+  }
+  return <input value={inputVal} onChange={changeValue} />
 }
 
 const MyDeferredComponent = withDeferRender(MyComponent)
@@ -39,10 +43,9 @@ const App = () => {
       <button onClick={() => setUnmount(old => !old)}>Unmount</button>
       {!unmount && (
         <div>
-          {constructRangerArray(20).map(i => <MyDeferredComponent key={i} value={i} />)}
+          {constructRangerArray(2000).map(i => <MyDeferredComponent key={i} value={i} />)}
         </div>
       )}
-
     </DeferRenderProvider>
   )
 }
