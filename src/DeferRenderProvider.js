@@ -23,15 +23,31 @@ function DeferRenderProvider({ delay = 0, batchSize = 10, mode = __DEFFER_MODES.
   const lastRegisteredWorkIndex = React.useRef(0)
   const workQueue = React.useRef([])
   const currentWork = React.useRef([])
+  const delayRef = React.useRef(delay)
+  if (delayRef.current !== delay) {
+    delayRef.current = delay
+  }
+  const modeRef = React.useRef(mode)
+  if (modeRef.current !== mode) {
+    modeRef.current = mode
+  }
+  const batchSizeRef = React.useRef(batchSize)
+  if (batchSizeRef.current !== batchSize) {
+    batchSizeRef.current = batchSize
+  }
 
   function register(work) {
     const newWork = makeNewWork(work, ++lastRegisteredWorkIndex.current)
     workQueue.current.push(newWork)
+    if (workQueue.current.length === 1) {
+      setTimeout(next)
+    }
     return newWork.index
   }
   function reconcileWorkStatus() {
     if (currentWork.current.length === 0 && workStatus.current !== __WORKING_STATUS.PAUSED) {
       workStatus.current = __WORKING_STATUS.IDLE
+      next()
     }
   }
   function removeWork(work) {
@@ -49,7 +65,7 @@ function DeferRenderProvider({ delay = 0, batchSize = 10, mode = __DEFFER_MODES.
       workStatus.current = __WORKING_STATUS.WORKING
       currentWork.current.forEach(work => {
         work.rafId = window.requestAnimationFrame(() => {
-          work.timeoutId = setTimeout(() => commitWork(work), delay)
+          work.timeoutId = setTimeout(() => commitWork(work), delayRef.current)
         })
       })
     }
@@ -65,23 +81,23 @@ function DeferRenderProvider({ delay = 0, batchSize = 10, mode = __DEFFER_MODES.
       return
     }
     workStatus.current = __WORKING_STATUS.WORKING
-    if (mode === __DEFFER_MODES.SEQUENTIAL) {
+    if (modeRef.current === __DEFFER_MODES.SEQUENTIAL) {
       if (currentWork.current.length === 0) {
         const nextWork = workQueue.current[0]
         nextWork.ready = true
         currentWork.current.push(nextWork)
       }
       asyncProcessCurrentWork()
-    } else if (mode === __DEFFER_MODES.SYNC) {
+    } else if (modeRef.current === __DEFFER_MODES.SYNC) {
       if (currentWork.current.length === 0) {
-        const nextWork = workQueue.current.slice(0, batchSize || workQueue.current.length)
+        const nextWork = workQueue.current.slice(0, batchSizeRef.current || workQueue.current.length)
         currentWork.current.push(...nextWork)
         currentWork.current.forEach(t => { t.ready = true })
       }
-      setTimeout(processCurrentWork, delay)
-    } else if (mode === __DEFFER_MODES.ASYNC_CONCURRENT) {
+      setTimeout(processCurrentWork, delayRef.current)
+    } else if (modeRef.current === __DEFFER_MODES.ASYNC_CONCURRENT) {
       if (currentWork.current.length === 0) {
-        const nextWork = workQueue.current.slice(0, batchSize || workQueue.current.length)
+        const nextWork = workQueue.current.slice(0, batchSizeRef.current || workQueue.current.length)
         currentWork.current.push(...nextWork)
         currentWork.current.forEach(t => { t.ready = true })
       }
