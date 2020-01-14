@@ -4,10 +4,70 @@
 
 [![NPM](https://img.shields.io/npm/v/react-deffer-renderer.svg)](https://www.npmjs.com/package/react-deffer-renderer) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+## Use cases
 
-## What is this
+- Drastically reduce user's time to interaction when the tree is relatively huge
+- Pause and resume render on-demand
+- Defer the render of invisible tabs
+- Defer render of trees outside the viewport
+- When a list is huge/complex and you have to paint it entirely (ie: 800 inputs, 2000 divs ...), the first render may feel laggy and the user won't be able to interact with some elements until the whole work is done 
+- The pause and resume feature could be used to easily manage a deferred infiniteScroll list easily 
+
+## Usage
+
+```jsx
+
+import MyComponent from './path'
+import { withDeferRender } from 'react-deffer-renderer'
+
+const DeferredComponent = withDeferRender(MyComponent)
+const DeferredComponent = withDeferRender(MyComponent, { fallback: <Spinner />, delay: 200 })
+
+// ...
+
+<DeferredComponent />
+```
+---
+```jsx
+
+import MyComponent from './path'
+import { DeferRenderProvider } from 'react-deffer-renderer'
+
+// ...
+
+<DeferRenderProvider >
+  // <App />
+  // <Section /> 
+  // <SideBar />
+</DeferRenderProvider>
+
+<DeferRenderProvider
+  delay={20}
+  batchSize={20}
+  mode="async-concurrent|sync|sequential"
+  >
+  // <App />
+  // <Section /> 
+  // <SideBar />
+</DeferRenderProvider>
+```
+---
+```jsx
+import { DeferContext } from 'react-deffer-renderer'
+
+function Commander() {
+  const { pause, resume } = React.useContext(DeferContext)
+  return (
+    <div>
+      <Button onClick={pause}>pause</Button>
+      <Button onClick={resume}>resume</Button>
+    </div>
+  )
+}
+```
 
 
+#### Old notes
 
 Defer the render of your react component(tree) after the first paint.
 This increases the time by which the user can interact with the app in general since it wait until paint is done, then request idle callback to tell react it's ok to render that tree
@@ -23,14 +83,6 @@ This increases the time by which the user can interact with the app in general s
     - Async-concurrent: Triggers the render of `bachSize = workQueue.length` of trees in an async approach
     - Sync: Will trigger the render of `batchSize = workQueue.length` of trees in a sync way: render a batch, paint it, then render another one...
 - In a context, your can `pause` and `resume` the work
-## Use cases
-
-- Time to user interaction in complex trees is reduced drastically
-- Defer the render of invisible tabs
-- Defer render of trees outside the viewport
-- When a list is huge/complex and you have to paint it entirely (ie: 800 inputs, 2000 divs ...), the first render may feel laggy and the user won't be able to interact with some elements until the whole work is done 
-- The pause and resume feature could be used to easily manage a deferred infiniteScroll list easily 
-
 
 ## License
 
