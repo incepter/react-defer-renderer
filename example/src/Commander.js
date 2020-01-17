@@ -4,6 +4,7 @@ import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import PauseIcon from '@material-ui/icons/Pause'
 import ResumeIcon from '@material-ui/icons/PlayArrow'
+import RefreshIcon from '@material-ui/icons/Refresh'
 import StopIcon from '@material-ui/icons/Stop'
 import { DeferContext } from 'react-deffer-renderer'
 import Select from '@material-ui/core/Select'
@@ -15,7 +16,7 @@ export function Commander({ mode, setMode, delay, setDelay, unmount, unmounted, 
     <div style={{ display: 'flex', alignItems: 'center', width: '50%', margin: 'auto' }}>
       <Tooltip placement='top' title='Unmount'>
         <IconButton onClick={unmount} color='secondary'>
-          <StopIcon />
+          {unmounted ? <RefreshIcon /> : <StopIcon />}
         </IconButton>
       </Tooltip>
       <Tooltip placement='top' title='Pause'>
