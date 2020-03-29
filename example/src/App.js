@@ -1,50 +1,29 @@
 import React from 'react'
-import { withDeferRender, DeferRenderProvider, DeferContext } from 'react-deffer-renderer'
+import { DeferRenderProvider } from 'react-deffer-renderer'
+import Commander from './Commander'
+import Todos from './Todos'
 
-function constructRangerArray(length) {
-  const out = []
-  for (let i = 0; i < length; i++) {
-    out.push(i)
-  }
-  return out
-}
-
-function MyComponent({ value }) {
-  const [inputVal, setInputVal] = React.useState(value)
-  function changeValue({ target: { value } }) {
-    setInputVal(value)
-  }
-  return <input value={inputVal} onChange={changeValue} />
-}
-
-const MyDeferredComponent = withDeferRender(MyComponent)
-
-function Commander() {
-  const { pause, resume } = React.useContext(DeferContext)
-  return (
-    <div>
-      <button onClick={pause}>pause</button>
-      <button onClick={resume}>resume</button>
-    </div>
-  )
-}
 const App = () => {
   const [unmount, setUnmount] = React.useState(false)
+  const [mode, setMode] = React.useState('sequential')
+  const [delay, setDelay] = React.useState(1000)
+  const [batchSize, setBatchSize] = React.useState(5)
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      // setUnmount(true)
-    }, 200)
-  }, [])
-  console.log('APP')
   return (
-    <DeferRenderProvider>
-      <Commander />
-      <button onClick={() => setUnmount(old => !old)}>Unmount</button>
+    <DeferRenderProvider delay={delay} mode={mode} batchSize={batchSize}>
+      <Commander
+        delay={delay}
+        setDelay={setDelay}
+        mode={mode}
+        setMode={setMode}
+        unmounted={unmount}
+        unmount={() => setUnmount(old => !old)}
+        setBatchSize={setBatchSize}
+        batchSize={batchSize}
+      />
+
       {!unmount && (
-        <div>
-          {constructRangerArray(2000).map(i => <MyDeferredComponent key={i} value={i} />)}
-        </div>
+        <Todos />
       )}
     </DeferRenderProvider>
   )
