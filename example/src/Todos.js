@@ -10,7 +10,7 @@ function StandaloneInput({ value }) {
   function changeValue({ target: { value } }) {
     setInputVal(value)
   }
-  return <input value={inputVal} onChange={changeValue} />
+  return <input value={inputVal} style={{ width: '100%' }} onChange={changeValue} />
 }
 
 const useStyles = makeStyles({
@@ -41,21 +41,19 @@ export function ToDo({ id, userId, title, completed }) {
       xl={1}
       className={classes.root}
     >
-      <Fade timeout={200} in>
-        <Grid
-          item
-          container
-          className={classes.wrapper}
-          style={{ backgroundColor: completed ? '#71f580' : '#fa6339' }}
-        >
-          <Grid item xs={12}>
-            <StandaloneInput value={`${id}-${userId}`} />
-          </Grid>
-          <Grid item xs={12}>
-            {title}
-          </Grid>
+      <Grid
+        item
+        container
+        className={classes.wrapper}
+        style={{ backgroundColor: completed ? '#71f580' : '#fa6339' }}
+      >
+        <Grid item xs={12}>
+          <StandaloneInput value={`${id}-${userId}`} />
         </Grid>
-      </Fade>
+        <Grid item xs={12}>
+          {title}
+        </Grid>
+      </Grid>
     </Grid>
   )
 }
@@ -70,18 +68,22 @@ ToDo.propTypes = {
 const DeferredTodo = withDeferRender(ToDo) //, { fallback: <CircularProgress /> })
 
 function Todos() {
+  const renderRef = React.useRef(0)
   const [todos, setTodos] = React.useState([])
 
+  // React.useEffect(() => {
+  //   renderRef.current++
+  // })
   React.useEffect(() => {
     // eslint-disable-next-line no-undef
     fetch('https://jsonplaceholder.typicode.com/todos')
       .then(res => res.json())
       .then(setTodos)
-  }, [])
+  }, [renderRef.current])
   console.log('got todos', todos)
   return (
     <Grid style={{ flexFlow: 'wrap-reverse' }} container>
-      {todos.sort((a, b) => b.id - a.id).map(todo => <DeferredTodo key={todo.id} {...todo} />)}
+      {todos.sort((a, b) => b.id - a.id).map(todo => <DeferredTodo key={`${renderRef.current}-${todo.id}`} {...todo} />)}
     </Grid>
   )
 }
