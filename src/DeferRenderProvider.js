@@ -2,30 +2,49 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DeferContext from './Context'
 
+/**
+ * represents the work status
+ */
 const __WORK_STATUS = {
   IDLE: 0,
   PAUSED: 1,
   WORKING: 2
 }
-
+/**
+ * The only three modes supported by the provider
+ */
 const __DEFFER_MODES = {
   SEQUENTIAL: 'sequential',
   SYNC: 'sync',
   ASYNC_CONCURRENT: 'async-concurrent'
 }
 
+/**
+ * just returns a work object to be saved in the context
+ */
 function makeNewWork(work, index) {
   return { work, index, ready: false, done: false, timeoutId: null, rafId: null }
 }
 
 /**
+ * This is the defer render context provider that will manage deferring many of your components.
  *
+ * It wraps your components with a DeferContext.Provider while giving as value the following:
+ * - register: will register a callback to be called when the time comes
+ * - next: will invoke the next callback if idle
+ * - pause: will pause the work
+ * - resume: will resume the work
+ * - cleanUp: will unsubscribe a work a delete it from context
+ *
+ *
+ * @param delay: number. The delay in ms after which the subscribed component is rendered
+ * @param batchSize: number, In async-concurrent and sync modes; we can batch subscribers
+ * @param mode: string. one of sync, sequential, async-concurrent
+ * @param children: ReactNode. the children of context
  */
-/** The difference between the sync mode and the async-concurrent is that **/
-
 function DeferRenderProvider({
   delay = 0,
-  batchSize = 10,
+  batchSize,
   mode = __DEFFER_MODES.SEQUENTIAL,
   children
 }) {
