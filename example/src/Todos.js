@@ -3,7 +3,10 @@ import * as PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import { withDeferRender } from 'react-deffer-renderer'
-import Fade from '@material-ui/core/Fade'
+
+function range(size, startAt = 0) {
+  return [...Array(size).keys()].map(i => i + startAt)
+}
 
 function StandaloneInput({ value }) {
   const [inputVal, setInputVal] = React.useState(value)
@@ -11,6 +14,9 @@ function StandaloneInput({ value }) {
     setInputVal(value)
   }
   return <input value={inputVal} style={{ width: '100%' }} onChange={changeValue} />
+}
+StandaloneInput.propTypes = {
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 }
 
 const useStyles = makeStyles({
@@ -75,12 +81,14 @@ function Todos() {
   //   renderRef.current++
   // })
   React.useEffect(() => {
-    // eslint-disable-next-line no-undef
-    fetch('https://jsonplaceholder.typicode.com/todos')
-      .then(res => res.json())
-      .then(setTodos)
+    const allTodos = range(1000).map(t => ({
+      id: t,
+      userId: t,
+      title: `This is the todo with index ${t}`,
+      completed: Math.random() > 0.5
+    }))
+    setTodos(allTodos)
   }, [renderRef.current])
-  console.log('got todos', todos)
   return (
     <Grid style={{ flexFlow: 'wrap-reverse' }} container>
       {todos.sort((a, b) => b.id - a.id).map(todo => <DeferredTodo key={`${renderRef.current}-${todo.id}`} {...todo} />)}
