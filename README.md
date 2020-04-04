@@ -21,7 +21,16 @@ This package provides a [`High Order Component`](https://reactjs.org/docs/higher
 And a [`Context Provider`](https://reactjs.org/docs/context.html#contextprovider) called [`DeferRenderProvider`](./src/DeferRenderProvider.js) which is optional and is used if you want to manage a bunch of deferred components.
 
 I tried to comment almost each expression of code for people looking to read the source code.
+
+## Demo
+This ongoing codeSandbox will contain reusable examples
+
+<a href="https://codesandbox.io/s/github/incepter/react-defer-render-demo/tree/master/">
+  <img alt="Edit vigilant-paper-ynigk" src="https://codesandbox.io/static/img/play-codesandbox.svg">
+</a>
+
 ## How it works
+
 1. The standalone mode: This means, each of your components is working independently out of context.
 Technically, in the first render, we render nothing or a fallback that can be used as a placeholder. and then we request an animation frame from the browser, when granted, we render the component.
 
