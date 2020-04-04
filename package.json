@@ -1,6 +1,6 @@
 {
   "name": "react-deffer-renderer",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Render components asynchronously and non blocking",
   "author": "incepter",
   "license": "MIT",
@@ -32,7 +32,6 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.1",
-    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "cross-env": "^5.2.0",
     "eslint": "5.16.0",
     "eslint-config-standard": "^11.0.0",
