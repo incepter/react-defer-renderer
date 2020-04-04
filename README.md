@@ -6,7 +6,7 @@
 
 ## What is this ?
 
-`react-defer-render` provides utilities that helps you defer the render of some components after the `natural` render.
+`react-defer-render` provides utilities that helps you defer the render of some components after the `natural` render. It is only `1.76 KB gripped`.
 
 During the first render, or the render of a complex tree, you may want to unblock the main thread
 and release it so that the most important parts of the app are rendered and painted first, the user may then navigate and abort the painting of a huge tree that is being rendered.
