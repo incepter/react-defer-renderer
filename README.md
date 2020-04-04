@@ -93,6 +93,19 @@ import { DeferRenderProvider } from 'react-deffer-render'
 4. Support `props` resolve to defer the render of a component until some props has same exact values.
 5. Support `Promise` resolve to defer the render until a promise resolves.
 
+## Run locally
+
+1. clone the project: `git clone https://github.com/incepter/react-defer-render.git`.
+2. install dependencies: `yarn`.
+3. start the package: `yarn start`.
+4. start the example: `cd exemple` and then `yarn start`.
+
+## Contribution guide
+
+1. Fork the project
+2. Add your new branch `git checkout -b feat/new-feature-name`
+3. Submit a pull request
+
 ### Other examples
 ```jsx
 
