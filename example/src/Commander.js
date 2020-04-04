@@ -6,7 +6,7 @@ import PauseIcon from '@material-ui/icons/Pause'
 import ResumeIcon from '@material-ui/icons/PlayArrow'
 import RefreshIcon from '@material-ui/icons/Refresh'
 import StopIcon from '@material-ui/icons/Stop'
-import { DeferContext } from 'react-deffer-renderer'
+import { DeferContext } from 'react-deffer-render'
 import Select from '@material-ui/core/Select'
 import { TextField } from '@material-ui/core'
 

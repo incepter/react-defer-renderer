@@ -1,6 +1,6 @@
 {
-  "name": "react-deffer-renderer-example",
-  "homepage": "https://incepter.github.io/react-deffer-renderer",
+  "name": "react-deffer-render-example",
+  "homepage": "https://incepter.github.io/react-deffer-render",
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
@@ -10,7 +10,7 @@
     "clsx": "^1.1.0",
     "prop-types": "^15.6.2",
     "react": "link:../node_modules/react",
-    "react-deffer-renderer": "link:..",
+    "react-deffer-render": "link:..",
     "react-dom": "^16.8.6"
   },
   "scripts": {

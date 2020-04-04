@@ -1,10 +1,10 @@
 {
-  "name": "react-deffer-renderer",
-  "version": "0.1.0",
+  "name": "react-deffer-render",
+  "version": "0.1.1",
   "description": "Render components asynchronously and non blocking",
   "author": "incepter",
   "license": "MIT",
-  "repository": "incepter/react-deffer-renderer",
+  "repository": "incepter/react-defer-render",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",

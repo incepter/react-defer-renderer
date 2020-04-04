@@ -1,8 +1,8 @@
-# react-deffer-renderer
+# react-deffer-render
 
 > Render components asynchronously and non blocking
 
-[![NPM](https://img.shields.io/npm/v/react-deffer-renderer.svg)](https://www.npmjs.com/package/react-deffer-renderer) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-deffer-render.svg)](https://www.npmjs.com/package/react-deffer-render) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## What is this ?
 
@@ -21,7 +21,16 @@ This package provides a [`High Order Component`](https://reactjs.org/docs/higher
 And a [`Context Provider`](https://reactjs.org/docs/context.html#contextprovider) called [`DeferRenderProvider`](./src/DeferRenderProvider.js) which is optional and is used if you want to manage a bunch of deferred components.
 
 I tried to comment almost each expression of code for people looking to read the source code.
+
+## Demo
+This ongoing codeSandbox will contain reusable examples
+
+<a href="https://codesandbox.io/s/github/incepter/react-defer-render-demo/tree/master/">
+  <img alt="Edit vigilant-paper-ynigk" src="https://codesandbox.io/static/img/play-codesandbox.svg">
+</a>
+
 ## How it works
+
 1. The standalone mode: This means, each of your components is working independently out of context.
 Technically, in the first render, we render nothing or a fallback that can be used as a placeholder. and then we request an animation frame from the browser, when granted, we render the component.
 
@@ -44,7 +53,7 @@ This mode works like the standalone, except that there are a lot of components m
 The hoc just wraps your initial component.
 
 ```jsx
-import { withDeferRender } from 'react-deffer-renderer'
+import { withDeferRender } from 'react-deffer-render'
 
 // WrappedComponent: a React Component
 // config: an object accepting only `fallback` property that is a React element
@@ -54,7 +63,7 @@ const DeferredComponent = withDeferRender(WrappedComponent, config);
 ### Using the Provider
 The Provider, like any react context provider, needs to be in the right place wrapping your tree
 ```jsx
-import { DeferRenderProvider } from 'react-deffer-renderer'
+import { DeferRenderProvider } from 'react-deffer-render'
 
 <DeferRenderProvider delay={10} batchSize={5} mode="sync">
   <AppTreeThatContainsSomeDeferredComponents />
@@ -84,11 +93,24 @@ import { DeferRenderProvider } from 'react-deffer-renderer'
 4. Support `props` resolve to defer the render of a component until some props has same exact values.
 5. Support `Promise` resolve to defer the render until a promise resolves.
 
+## Run locally
+
+1. clone the project: `git clone https://github.com/incepter/react-defer-render.git`.
+2. install dependencies: `yarn`.
+3. start the package: `yarn start`.
+4. start the example: `cd exemple` and then `yarn start`.
+
+## Contribution guide
+
+1. Fork the project
+2. Add your new branch `git checkout -b feat/new-feature-name`
+3. Submit a pull request
+
 ### Other examples
 ```jsx
 
 import LongTabContentForm from './path'
-import { withDeferRender } from 'react-deffer-renderer'
+import { withDeferRender } from 'react-deffer-render'
 
 const DeferredComponent = withDeferRender(LongTabContentForm)
 const DeferredComponent = withDeferRender(LongTabContentForm, { fallback: <Spinner /> })
@@ -101,7 +123,7 @@ const DeferredComponent = withDeferRender(LongTabContentForm, { fallback: <Spinn
 ```jsx
 
 import MyComponent from './path'
-import { DeferRenderProvider } from 'react-deffer-renderer'
+import { DeferRenderProvider } from 'react-deffer-render'
 
 // ...
 
@@ -134,7 +156,7 @@ The defer provider puts in context value the following functions:
 |`resume`     |`YES`            |`N/A`            | Will ask the provider to resume the rendering work
 
 ```jsx
-import { DeferContext } from 'react-deffer-renderer'
+import { DeferContext } from 'react-deffer-render'
 
 function Commander() {
   const { pause, resume } = React.useContext(DeferContext)
