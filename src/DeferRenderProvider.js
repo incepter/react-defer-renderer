@@ -310,7 +310,7 @@ DeferRenderProvider.propTypes = {
   children: PropTypes.any,
   delay: PropTypes.number,
   batchSize: PropTypes.number,
-  mode: PropTypes.oneOf('sequential', 'sync', 'async-concurrent')
+  mode: PropTypes.oneOf(['sequential', 'sync', 'async-concurrent'])
 }
 
 export default DeferRenderProvider
