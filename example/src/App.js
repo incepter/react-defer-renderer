@@ -1,5 +1,5 @@
 import React from 'react'
-import { DeferRenderProvider } from 'react-deffer-render'
+import { DeferRenderProvider } from 'react-defer-renderer'
 import Commander from './Commander'
 import Todos from './Todos'
 import SideBar from './SideBar'

@@ -13,7 +13,7 @@ const __WORK_STATUS = {
 /**
  * The only three modes supported by the provider
  */
-const __DEFFER_MODES = {
+const __DEFER_MODES = {
   SEQUENTIAL: 'sequential',
   SYNC: 'sync',
   ASYNC_CONCURRENT: 'async-concurrent'
@@ -45,7 +45,7 @@ function makeNewWork(work, index) {
 function DeferRenderProvider({
   delay = 0,
   batchSize,
-  mode = __DEFFER_MODES.SEQUENTIAL,
+  mode = __DEFER_MODES.SEQUENTIAL,
   children
 }) {
   /**
@@ -204,7 +204,7 @@ function DeferRenderProvider({
      * In the sequential work mode; the provider renders only one component at a time
      * each deferred component after rendering, calls the next function
      */
-    if (modeRef.current === __DEFFER_MODES.SEQUENTIAL) {
+    if (modeRef.current === __DEFER_MODES.SEQUENTIAL) {
       /** add work to the current work queue only if there is no ongoing work **/
       if (currentWorkQueue.current.length === 0) {
         /** grab the first work from the queue, flag it as ready, then push it in the current work queue **/
@@ -218,7 +218,7 @@ function DeferRenderProvider({
        * say we have a batch size of 10, and a delay of 100, this means
        * each 100 millis, 10 components will be printed to the screen at the same time
        */
-    } else if (modeRef.current === __DEFFER_MODES.SYNC) {
+    } else if (modeRef.current === __DEFER_MODES.SYNC) {
       if (currentWorkQueue.current.length === 0) {
         /** take either the batch size or the whole work and send it to the current work queue **/
         const nextWork = workQueue.current.slice(0, batchSizeRef.current || workQueue.current.length)
@@ -231,7 +231,7 @@ function DeferRenderProvider({
        * say we have a batch size of 10, and a delay of 100, this means
        * each 100 millis, 10 components will be printed to the screen, but they may not be printed at the same time
        */
-    } else if (modeRef.current === __DEFFER_MODES.ASYNC_CONCURRENT) {
+    } else if (modeRef.current === __DEFER_MODES.ASYNC_CONCURRENT) {
       if (currentWorkQueue.current.length === 0) {
         /** take either the batch size or the whole work and send it to the current work queue **/
         const nextWork = workQueue.current.slice(0, batchSizeRef.current || workQueue.current.length)

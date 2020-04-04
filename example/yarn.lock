@@ -266,7 +266,7 @@ prop-types@^15.6.2, prop-types@^15.7.2:
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
-"react-deffer-render@link:..":
+"react-defer-renderer@link:..":
   version "0.0.0"
   uid ""
 
