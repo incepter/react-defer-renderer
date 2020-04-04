@@ -1,6 +1,6 @@
 {
-  "short_name": "react-deffer-render",
-  "name": "react-deffer-render",
+  "short_name": "react-defer-renderer",
+  "name": "react-defer-renderer",
   "start_url": "./index.html",
   "display": "standalone",
   "theme_color": "#000000",

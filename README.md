@@ -1,12 +1,12 @@
-# react-deffer-render
+# react-defer-renderer
 
 > Render components asynchronously and non blocking
 
-[![NPM](https://img.shields.io/npm/v/react-deffer-render.svg)](https://www.npmjs.com/package/react-deffer-render) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-defer-renderer.svg)](https://www.npmjs.com/package/react-defer-renderer) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## What is this ?
 
-`react-defer-render` provides utilities that helps you defer the render of some components after the `natural` render. It is only `1.76 KB gripped`.
+`react-defer-renderer` provides utilities that helps you defer the render of some components after the `natural` render. It is only `1.76 KB gripped`.
 
 During the first render, or the render of a complex tree, you may want to unblock the main thread
 and release it so that the most important parts of the app are rendered and painted first, the user may then navigate and abort the painting of a huge tree that is being rendered.
@@ -53,7 +53,7 @@ This mode works like the standalone, except that there are a lot of components m
 The hoc just wraps your initial component.
 
 ```jsx
-import { withDeferRender } from 'react-deffer-render'
+import { withDeferRender } from 'react-defer-renderer'
 
 // WrappedComponent: a React Component
 // config: an object accepting only `fallback` property that is a React element
@@ -63,7 +63,7 @@ const DeferredComponent = withDeferRender(WrappedComponent, config);
 ### Using the Provider
 The Provider, like any react context provider, needs to be in the right place wrapping your tree
 ```jsx
-import { DeferRenderProvider } from 'react-deffer-render'
+import { DeferRenderProvider } from 'react-defer-renderer'
 
 <DeferRenderProvider delay={10} batchSize={5} mode="sync">
   <AppTreeThatContainsSomeDeferredComponents />
@@ -73,7 +73,7 @@ import { DeferRenderProvider } from 'react-deffer-render'
 
 |Prop         | PropType                                          | Default value                    | Usage            |
 |-------------|---------------------------------------------------|----------------------------------|------------------|
-|`mode`       | `oneOf(['sync', sequential', 'async-concurrent])` | `sync`                           | Represents the context deferring mode
+|`mode`       | `oneOf(['sync', sequential', 'async-concurrent])` | `sequential`                           | Represents the context deferring mode
 |`delay`      | `number`                                          | `0`                              | The delay in ms after which the component is granted the render
 |`batchSize`  | `number`                                          | `deferred components count`      | In sync and async-concurrent modes, it batches renders
 
@@ -110,7 +110,7 @@ import { DeferRenderProvider } from 'react-deffer-render'
 ```jsx
 
 import LongTabContentForm from './path'
-import { withDeferRender } from 'react-deffer-render'
+import { withDeferRender } from 'react-defer-renderer'
 
 const DeferredComponent = withDeferRender(LongTabContentForm)
 const DeferredComponent = withDeferRender(LongTabContentForm, { fallback: <Spinner /> })
@@ -123,7 +123,7 @@ const DeferredComponent = withDeferRender(LongTabContentForm, { fallback: <Spinn
 ```jsx
 
 import MyComponent from './path'
-import { DeferRenderProvider } from 'react-deffer-render'
+import { DeferRenderProvider } from 'react-defer-renderer'
 
 // ...
 
@@ -156,7 +156,7 @@ The defer provider puts in context value the following functions:
 |`resume`     |`YES`            |`N/A`            | Will ask the provider to resume the rendering work
 
 ```jsx
-import { DeferContext } from 'react-deffer-render'
+import { DeferContext } from 'react-defer-renderer'
 
 function Commander() {
   const { pause, resume } = React.useContext(DeferContext)
