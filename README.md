@@ -76,6 +76,14 @@ import { DeferRenderProvider } from 'react-deffer-renderer'
 
 3. `async-concurrent`: The sync mode will grant the render to the `batchSize` components with an asynchronous behavior, the paint order will managed by react internals.
 
+## TODO and road-map
+
+1. Write a lot of tests for the project. I have not wrote them yet because I had just the idea that was complex at first, and I still do not have a complete overview of how the complete version of the product will look like.
+2. Exclude `register`, `next` and `cleanUp` from `DeferContext`, because they are meant for internal use.
+3. When pausing a work that has been granted but the delay has not being resolved yet, the work should be interrupted immediately.
+4. Support `props` resolve to defer the render of a component until some props has same exact values.
+5. Support `Promise` resolve to defer the render until a promise resolves.
+
 ### Other examples
 ```jsx
 
