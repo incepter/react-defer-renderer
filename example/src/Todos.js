@@ -2,7 +2,7 @@ import React from 'react'
 import * as PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
-import { withDeferRender } from 'react-deffer-renderer'
+import { withDeferRender } from 'react-deffer-render'
 
 function range(size, startAt = 0) {
   return [...Array(size).keys()].map(i => i + startAt)
