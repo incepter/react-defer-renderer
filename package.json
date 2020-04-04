@@ -1,6 +1,6 @@
 {
   "name": "react-deffer-renderer",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Render components asynchronously and non blocking",
   "author": "incepter",
   "license": "MIT",
