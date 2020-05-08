@@ -1,5 +1,5 @@
 import React from 'react'
-import DeferContext from './Context'
+import { InternalDeferContext } from './DeferContext'
 
 /**
  * This function will ask the browser for an animation frame
@@ -55,7 +55,7 @@ export default function withDeferRender(WrappedComponent, config) {
      * First, we retrieve the DeferContext value
      * Then we will try to init the register, next and cleanUp functions
      */
-    const contextValue = React.useContext(DeferContext)
+    const contextValue = React.useContext(InternalDeferContext)
     const register = contextValue?.register || standaloneRegister
     const next = contextValue?.next
     const cleanUp = contextValue?.cleanUp || standaloneCleanUp
