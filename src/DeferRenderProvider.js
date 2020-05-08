@@ -301,6 +301,13 @@ function DeferRenderProvider({
    */
   const pause = React.useCallback(() => {
     workStatus.current = __WORK_STATUS.PAUSED
+    currentWorkQueue.current.forEach(ongoingWork => {
+      if (ongoingWork.ready && !ongoingWork.done) {
+        window.cancelAnimationFrame(ongoingWork.rafId)
+        clearTimeout(ongoingWork.timeoutId)
+      }
+    })
+    currentWorkQueue.current = []
   }, [])
 
   /**

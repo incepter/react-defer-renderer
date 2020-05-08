@@ -83,7 +83,7 @@ function Todos() {
   //   renderRef.current++
   // })
   React.useEffect(() => {
-    const allTodos = range(100).map(t => ({
+    const allTodos = range(1000).map(t => ({
       id: t,
       userId: t,
       title: `This is the todo with index ${t}`,
