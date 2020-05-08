@@ -1,6 +1,6 @@
-import React from 'react'
+import * as React from 'react'
 import PropTypes from 'prop-types'
-import DeferContext from './Context'
+import DeferContext, { InternalDeferContext } from './DeferContext'
 
 /**
  * represents the work status
@@ -23,7 +23,14 @@ const __DEFER_MODES = {
  * just returns a work object to be saved in the context
  */
 function makeNewWork(work, index) {
-  return { work, index, ready: false, done: false, timeoutId: null, rafId: null }
+  return {
+    work,
+    index,
+    ready: false,
+    done: false,
+    timeoutId: null,
+    rafId: null
+  }
 }
 
 /**
@@ -95,7 +102,7 @@ function DeferRenderProvider({
    * It is important to note that this function is used to subscribe deferred components
    * and should return an identifier that will used in the clean-up function
    */
-  function register(work) {
+  const register = React.useCallback(work => {
     /**
      * The index tracker is used to identify works
      * it is basically an auto-increment integer value
@@ -116,30 +123,35 @@ function DeferRenderProvider({
     }
     /** The work index will be given to the clean up function to identify which work to clean */
     return newWork.index
-  }
+  }, [])
 
   /**
    * With the asynchronous behavior of components' subscription and the work being randomly executed in several ways
    * It is important to control the work status
    * this function will only set the work status to idle if there is no more work in the current work queue
    */
-  function reconcileWorkStatus() {
-    if (currentWorkQueue.current.length === 0 && workStatus.current !== __WORK_STATUS.PAUSED) {
+  const reconcileWorkStatus = React.useCallback(() => {
+    if (
+      currentWorkQueue.current.length === 0 &&
+      workStatus.current !== __WORK_STATUS.PAUSED
+    ) {
       workStatus.current = __WORK_STATUS.IDLE
       next()
     }
-  }
+  }, [])
 
   /**
    * This function will remove a work entirely from both the work queue and the current work queue
    * It is executed after a work is done
-   * So basically; after a work is done, it is immediatly removed and the work status is reconciled
+   * So basically; after a work is done, it is immediately removed and the work status is reconciled
    */
-  function removeWork(work) {
+  const removeWork = React.useCallback(work => {
     workQueue.current = workQueue.current.filter(t => t.index !== work.index)
-    currentWorkQueue.current = currentWorkQueue.current.filter(t => t.index !== work.index)
+    currentWorkQueue.current = currentWorkQueue.current.filter(
+      t => t.index !== work.index
+    )
     reconcileWorkStatus()
-  }
+  }, [])
 
   /**
    * This is actually the work
@@ -149,16 +161,16 @@ function DeferRenderProvider({
    * the work, if not done, may be executed from a next call from a previously rendered component
    * All defer modes pass through this function
    */
-  function commitWork(work) {
+  const commitWork = React.useCallback(work => {
     work.work()
     work.done = true
     removeWork(work)
-  }
+  }, [])
 
   /**
    * This function is executed in both modes: SEQUENTIAL and ASYNC_CONCURRENT
    */
-  function asyncProcessCurrentWork() {
+  const asyncProcessCurrentWork = React.useCallback(() => {
     /** the work status need to be either idle or working, if paused, we should do nothing **/
     if (workStatus.current !== __WORK_STATUS.PAUSED) {
       /** flag the work status as working **/
@@ -174,26 +186,26 @@ function DeferRenderProvider({
         })
       })
     }
-  }
+  }, [])
 
   /**
    * This function is executed when using the sync defer mode
    */
-  function processCurrentWork() {
+  const processCurrentWork = React.useCallback(() => {
     if (workStatus.current !== __WORK_STATUS.PAUSED) {
       workStatus.current = __WORK_STATUS.WORKING
       // will immediately commit all work in the current work queue.
       // aka: the sliced batchSize from the remaining work in the queue
       currentWorkQueue.current.forEach(commitWork)
     }
-  }
+  }, [])
 
   /**
    * This function is called only from the `next` function
    * but it is the main function of the provider
    * depending on the defer mode, will execute the corresponding function (processCurrentWork or asyncProcessCurrentWork)
    */
-  function beginWork() {
+  const beginWork = React.useCallback(() => {
     /** immediately exit if there is no work in the main queue **/
     if (workQueue.current.length === 0) {
       return
@@ -221,9 +233,14 @@ function DeferRenderProvider({
     } else if (modeRef.current === __DEFER_MODES.SYNC) {
       if (currentWorkQueue.current.length === 0) {
         /** take either the batch size or the whole work and send it to the current work queue **/
-        const nextWork = workQueue.current.slice(0, batchSizeRef.current || workQueue.current.length)
+        const nextWork = workQueue.current.slice(
+          0,
+          batchSizeRef.current || workQueue.current.length
+        )
         currentWorkQueue.current.push(...nextWork)
-        currentWorkQueue.current.forEach(t => { t.ready = true })
+        currentWorkQueue.current.forEach(t => {
+          t.ready = true
+        })
       }
       setTimeout(processCurrentWork, delayRef.current)
       /**
@@ -234,29 +251,37 @@ function DeferRenderProvider({
     } else if (modeRef.current === __DEFER_MODES.ASYNC_CONCURRENT) {
       if (currentWorkQueue.current.length === 0) {
         /** take either the batch size or the whole work and send it to the current work queue **/
-        const nextWork = workQueue.current.slice(0, batchSizeRef.current || workQueue.current.length)
+        const nextWork = workQueue.current.slice(
+          0,
+          batchSizeRef.current || workQueue.current.length
+        )
         currentWorkQueue.current.push(...nextWork)
-        currentWorkQueue.current.forEach(t => { t.ready = true })
+        currentWorkQueue.current.forEach(t => {
+          t.ready = true
+        })
       }
       asyncProcessCurrentWork()
     }
-  }
+  }, [])
 
   /**
    * This is the entry-point of all work; it only checks that the work status is idle and that there is something the queue, then triggers the beginWork function
    * This function is also called each time a deferred component renders
    */
-  function next() {
-    if (workStatus.current === __WORK_STATUS.IDLE && workQueue.current.length > 0) {
+  const next = React.useCallback(() => {
+    if (
+      workStatus.current === __WORK_STATUS.IDLE &&
+      workQueue.current.length > 0
+    ) {
       beginWork()
     }
-  }
+  }, [])
 
   /**
    * If a tree get unmounted, it is important to remove all the associated work to avoid calling the callback
    * after we are granted the animation frame or the timeout resolves
    */
-  function cleanUp(index) {
+  const cleanUp = React.useCallback(index => {
     /** grab the work given the identifier we are trying to remove **/
     const fromCurrent = currentWorkQueue.current.find(t => t.index === index)
     /**
@@ -268,23 +293,30 @@ function DeferRenderProvider({
     }
     /** Remove the work from both queues **/
     removeWork({ index })
-  }
+  }, [])
 
   /**
    * To pause a work, it is only necessary to flag the work status as PAUSED
    * todo: unsubscribe from the animation frame and/or the timeout and remove the work only from the currentWorkQueue
    */
-  function pause() {
+  const pause = React.useCallback(() => {
     workStatus.current = __WORK_STATUS.PAUSED
-  }
+    currentWorkQueue.current.forEach(ongoingWork => {
+      if (ongoingWork.ready && !ongoingWork.done) {
+        window.cancelAnimationFrame(ongoingWork.rafId)
+        clearTimeout(ongoingWork.timeoutId)
+      }
+    })
+    currentWorkQueue.current = []
+  }, [])
 
   /**
    * To resume the work, we need to flag the status as idle then call next
    */
-  function resume() {
+  const resume = React.useCallback(() => {
     workStatus.current = __WORK_STATUS.IDLE
     next()
-  }
+  }, [])
 
   /**
    * After each provider render, it will trigger the work
@@ -293,16 +325,23 @@ function DeferRenderProvider({
     next()
   })
 
+  const internalContextValue = React.useMemo(() => ({
+    next,
+    cleanUp,
+    register
+  }), [])
+
+  const sharedContextValue = React.useMemo(() => ({
+    pause,
+    resume
+  }), [])
+
   return (
-    <DeferContext.Provider value={{
-      next,
-      pause,
-      resume,
-      cleanUp,
-      register
-    }}>
-      {children}
-    </DeferContext.Provider>
+    <InternalDeferContext.Provider value={internalContextValue}>
+      <DeferContext.Provider value={sharedContextValue}>
+        {children}
+      </DeferContext.Provider>
+    </InternalDeferContext.Provider>
   )
 }
 

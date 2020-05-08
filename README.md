@@ -88,8 +88,8 @@ import { DeferRenderProvider } from 'react-defer-renderer'
 ## TODO and road-map
 
 1. Write a lot of tests for the project. I have not wrote them yet because I had just the idea that was complex at first, and I still do not have a complete overview of how the complete version of the product will look like.
-2. Exclude `register`, `next` and `cleanUp` from `DeferContext`, because they are meant for internal use.
-3. When pausing a work that has been granted but the delay has not being resolved yet, the work should be interrupted immediately.
+2. <s>Exclude `register`, `next` and `cleanUp` from `DeferContext`, because they are meant for internal use.</s>
+3. <s>When pausing a work that has been granted but the delay has not being resolved yet, the work should be interrupted immediately.</s>
 4. Support `props` resolve to defer the render of a component until some props has same exact values.
 5. Support `Promise` resolve to defer the render until a promise resolves.
 

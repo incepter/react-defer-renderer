@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types'
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import { withDeferRender } from 'react-defer-renderer'
+import { isEqual } from 'lodash'
 
 function range(size, startAt = 0) {
   return [...Array(size).keys()].map(i => i + startAt)
@@ -72,6 +73,7 @@ ToDo.propTypes = {
 }
 
 const DeferredTodo = withDeferRender(ToDo) //, { fallback: <CircularProgress /> })
+const MemoizedTodo = React.memo(DeferredTodo, isEqual)
 
 function Todos() {
   const renderRef = React.useRef(0)
@@ -91,7 +93,7 @@ function Todos() {
   }, [renderRef.current])
   return (
     <Grid style={{ flexFlow: 'wrap-reverse' }} container>
-      {todos.sort((a, b) => b.id - a.id).map(todo => <DeferredTodo key={`${renderRef.current}-${todo.id}`} {...todo} />)}
+      {todos.sort((a, b) => b.id - a.id).map(todo => <MemoizedTodo key={`${renderRef.current}-${todo.id}`} {...todo} />)}
     </Grid>
   )
 }
